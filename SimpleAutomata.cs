@@ -366,7 +366,7 @@ namespace UInput
         private static char BuildGlyph(List<char> characterHistory)
         {
             if (characterHistory.Count == 0)
-                return ' ';
+                return '\0';
 
             if (characterHistory.Count == 1)
                 return characterHistory[0];
