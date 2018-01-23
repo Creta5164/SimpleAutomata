@@ -27,6 +27,12 @@ SimpleAutomata.EscapeGlyph();
 ```
 > 오토마타로 조합되고 있는 문자에서 탈출합니다.
 
+### 조합중인 상태
+```csharp
+SimpleAutomata.isBuilding
+```
+> 현재 조합하고 있는 상황인 지 반환합니다.
+
 
 지원되는 입력
 - 자음/모음, 기본 한글입력
