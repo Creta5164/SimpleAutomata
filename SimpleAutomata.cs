@@ -63,6 +63,13 @@ namespace UInput
         /// 현재 오토마타를 보여줍니다.
         /// </summary>
         public static char buildResult { get; private set; }
+        
+        /// <summary>
+        /// 현재 오토마타가 조합되고 있는 상태인 지 알려줍니다.
+        /// </summary>
+        public static bool isBuilding { get {
+                return characterHistory.Count != 0;
+            } }
 
         /// <summary>
         /// 오토마타를 포함하지 않는 현재 만들어진 텍스트입니다.
