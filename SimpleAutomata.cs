@@ -60,14 +60,14 @@ namespace UInput
         private enum AutomataScope { idle, first, second, last }
 
         /// <summary>
-        /// 오토마타를 포함하지 않는 현재 만들어진 텍스트입니다.
-        /// </summary>
-        public static string currentText { get; private set; } = "";
-
-        /// <summary>
         /// 현재 오토마타를 보여줍니다.
         /// </summary>
         public static char buildResult { get; private set; }
+
+        /// <summary>
+        /// 오토마타를 포함하지 않는 현재 만들어진 텍스트입니다.
+        /// </summary>
+        public static string currentText = "";
 
         /// <summary>
         /// 오토마타가 초성, 중성, 종성인 지 가리키는 플래그입니다.
@@ -341,7 +341,7 @@ namespace UInput
         /// <para>한 글자에 있는 것이 불가능한 경우, 마지막 문자를 가져와 다음 오토마타를 만들어 붙이고 탈출합니다.</para>
         /// </summary>
         /// <param name="castChar">다음 오토마타에 붙일 새 문자</param>
-        public static void EscapeGlyph(char castChar)
+        private static void EscapeGlyph(char castChar)
         {
             if (characterHistory.Count < 2) return;
 
