@@ -328,7 +328,9 @@ namespace UInput
         /// </summary>
         public static void EscapeGlyph()
         {
-            currentText += BuildGlyph(characterHistory);
+            char build = BuildGlyph(characterHistory);
+            if (build != '\0')
+                currentText += build;
             characterHistory.Clear();
             scopeHistory.Clear();
             scopeHistory.Add(currentScope = AutomataScope.idle);
