@@ -343,7 +343,7 @@ namespace UInput
         /// <param name="castChar">다음 오토마타에 붙일 새 문자</param>
         private static void EscapeGlyph(char castChar)
         {
-            if (characterHistory.Count < 2) return;
+            if (characterHistory.Count <= 2) return;
 
             if (Vowel.ContainsKey(castChar)) {
                 char lastIndex = characterHistory[2];
