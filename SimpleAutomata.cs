@@ -157,9 +157,34 @@ namespace UInput
         /// <summary>
         /// 오토마타로 만들어지는 글리프를 되돌리거나 텍스트에서 문자를 제거합니다.
         /// </summary>
-        public static void UndoAutomata() {
-            buildResult = '＿';
+        public static bool UndoAutomata(){
+            buildResult = UNDERBAR_IDLE;
             if (characterHistory.Count > 0) {
+                if (Consonant.ContainsKey(characterHistory[characterHistory.Count - 1])) {
+                    uint glyph = characterHistory[characterHistory.Count - 1];
+                    GlyphInfo data = Consonant[Convert.ToChar(glyph)];
+                    if (data.constructGlyphs == null) {
+                        while (data.constructGlyphs == null)
+                            data = Consonant[Convert.ToChar(--glyph)];
+
+                        characterHistory[characterHistory.Count - 1] = Convert.ToChar(glyph);
+
+                        return true;
+                    }
+
+                } else if (Vowel.ContainsKey(characterHistory[characterHistory.Count - 1])) {
+                    uint glyph = characterHistory[characterHistory.Count - 1];
+                    GlyphInfo data = Vowel[Convert.ToChar(glyph)];
+                    if (data.constructGlyphs == null) {
+                        while (data.constructGlyphs == null)
+                            data = Vowel[Convert.ToChar(--glyph)];
+
+                        characterHistory[characterHistory.Count - 1] = Convert.ToChar(glyph);
+
+                        return true;
+                    }
+                }
+
                 characterHistory.RemoveAt(characterHistory.Count - 1);
                 scopeHistory.RemoveAt(scopeHistory.Count - 1);
                 currentScope = scopeHistory.Count > 0 ? scopeHistory[scopeHistory.Count - 1] : AutomataScope.idle;
@@ -168,6 +193,8 @@ namespace UInput
                 currentText = currentText.Remove(currentText.Length - 1);
             } else
                 currentText = "";
+
+            return false;
         }
         
         /// <summary>
@@ -352,13 +379,19 @@ namespace UInput
         /// <param name="castChar">다음 오토마타에 붙일 새 문자</param>
         private static void EscapeGlyph(char castChar)
         {
-            if (characterHistory.Count <= 2) return;
+            //if (characterHistory.Count <= 2) return;
 
             if (Vowel.ContainsKey(castChar)) {
                 char lastIndex = characterHistory[2];
-                UndoAutomata();
+                if (UndoAutomata()) {
+                    GlyphInfo data = Consonant[characterHistory[2]];
+
+                    lastIndex = data.constructGlyphs[(int)Consonant[lastIndex].index - (int)data.index - 1];
+                }
+
                 EscapeGlyph();
                 characterHistory.Add(lastIndex);
+
                 scopeHistory.Add(currentScope = AutomataScope.first);
             } else {
                 EscapeGlyph();
