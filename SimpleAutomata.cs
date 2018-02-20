@@ -11,6 +11,8 @@ namespace UInput
 {
     public class SimpleAutomata
     {
+        public const char UNDERBAR_IDLE = '＿';
+        
         /// <summary>
         /// 자음, 모음 집합을 구현하기 위한 구조체입니다.
         /// </summary>
