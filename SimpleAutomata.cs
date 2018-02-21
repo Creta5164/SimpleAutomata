@@ -115,7 +115,7 @@ namespace UInput
                 { 'ㄾ', new GlyphInfo(13, 0                    )},
                 { 'ㄿ', new GlyphInfo(14, 0                    )},
                 { 'ㅀ', new GlyphInfo(15, 0                    )},
-            { 'ㅁ',     new GlyphInfo(16, 6                    )},
+            { 'ㅁ',     new GlyphInfo(16, 6  , EndUpStyle.alone)},
             { 'ㅂ',     new GlyphInfo(17, 7  , "ㅂㅅ"          )},
                 { 'ㅃ', new GlyphInfo(18, 8  , EndUpStyle.endUp)},
                 { 'ㅄ', new GlyphInfo(19, 0                    )},
