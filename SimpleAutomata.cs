@@ -306,13 +306,10 @@ namespace UInput
                             characterHistory[1] = Convert.ToChar(cacheGlyph);
 
                         } else {
-
-                            EscapeGlyph(glyph);
+                            EscapeGlyph();
                         }
                     } else {
-
-                        EscapeGlyph(glyph);
-
+                        EscapeGlyph();
                     }
 
                     break;
@@ -352,7 +349,6 @@ namespace UInput
                                 characterHistory[2] = Convert.ToChar(cacheGlyph);
                             
                         } else {
-
                             EscapeGlyph(glyph);
                         }
                     }
