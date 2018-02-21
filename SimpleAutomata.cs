@@ -292,8 +292,7 @@ namespace UInput
                     } else if (Vowel.ContainsKey(glyph)) {
                         if (Vowel[characterHistory[1]]
                             .constructGlyphs == null) {
-
-                            EscapeGlyph(glyph);
+                            EscapeGlyph();
 
                         } else if (Vowel[characterHistory[1]]
                             .constructGlyphs.Contains(glyph)) {
