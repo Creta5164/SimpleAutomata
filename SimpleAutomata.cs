@@ -182,9 +182,9 @@ namespace UInput
                 } else if (Vowel.ContainsKey(characterHistory[characterHistory.Count - 1])) {
                     uint glyph = characterHistory[characterHistory.Count - 1];
                     GlyphInfo data = Vowel[Convert.ToChar(glyph)];
-                    if (data.constructGlyphs == null &&
-                        data.constructGlyphs.Length > 1) {
-                        while (data.constructGlyphs == null)
+                    if (data.constructGlyphs == null) {
+                        while (data.constructGlyphs == null || 
+                              (data.constructGlyphs != null && data.constructGlyphs.Length <= 1))
                             data = Vowel[Convert.ToChar(--glyph)];
 
                         characterHistory[characterHistory.Count - 1] = Convert.ToChar(glyph);
