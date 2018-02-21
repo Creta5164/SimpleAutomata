@@ -389,7 +389,7 @@ namespace UInput
         {
             //if (characterHistory.Count <= 2) return;
 
-            if (Vowel.ContainsKey(castChar)) {
+            if (Consonant.ContainsKey(castChar)) {
                 char lastIndex = characterHistory[2];
                 if (UndoAutomata()) {
                     GlyphInfo data = Consonant[characterHistory[2]];
