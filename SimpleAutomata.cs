@@ -182,7 +182,8 @@ namespace UInput
                 } else if (Vowel.ContainsKey(characterHistory[characterHistory.Count - 1])) {
                     uint glyph = characterHistory[characterHistory.Count - 1];
                     GlyphInfo data = Vowel[Convert.ToChar(glyph)];
-                    if (data.constructGlyphs == null) {
+                    if (data.constructGlyphs == null &&
+                        data.constructGlyphs.Length > 1) {
                         while (data.constructGlyphs == null)
                             data = Vowel[Convert.ToChar(--glyph)];
 
@@ -377,7 +378,7 @@ namespace UInput
             scopeHistory.Clear();
             scopeHistory.Add(currentScope = AutomataScope.idle);
 
-            buildResult = '＿';
+            buildResult = UNDERBAR_IDLE;
         }
 
         /// <summary>
@@ -389,14 +390,14 @@ namespace UInput
         {
             //if (characterHistory.Count <= 2) return;
 
-            if (Consonant.ContainsKey(castChar)) {
-                char lastIndex = characterHistory[2];
+            if (Vowel.ContainsKey(castChar)) {
+                char lastIndex = characterHistory[characterHistory.Count - 1];
                 if (UndoAutomata()) {
-                    GlyphInfo data = Consonant[characterHistory[2]];
+                    GlyphInfo data = Consonant[characterHistory[characterHistory.Count - 1]];
 
                     lastIndex = data.constructGlyphs[(int)Consonant[lastIndex].index - (int)data.index - 1];
                 }
-
+                
                 EscapeGlyph();
                 characterHistory.Add(lastIndex);
 
