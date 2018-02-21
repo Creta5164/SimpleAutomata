@@ -12,6 +12,8 @@ namespace UInput
     public class SimpleAutomata
     {
         public const char UNDERBAR_IDLE = '＿';
+
+        private enum EndUpStyle { none, endUp, alone }
         
         /// <summary>
         /// 자음, 모음 집합을 구현하기 위한 구조체입니다.
@@ -32,22 +34,22 @@ namespace UInput
             /// </summary>
             public string constructGlyphs;
 
-            public bool canEndup;
+            public EndUpStyle endUpStyle;
 
             public GlyphInfo(uint index, uint globalIndex)
             {
                 this.index = index;
                 this.globalIndex = globalIndex;
                 constructGlyphs = null;
-                canEndup = true;
+                endUpStyle = EndUpStyle.none;
             }
 
-            public GlyphInfo(uint index, uint globalIndex, bool canEndup)
+            public GlyphInfo(uint index, uint globalIndex, EndUpStyle endUpStyle)
             {
                 this.index = index;
                 this.globalIndex = globalIndex;
                 constructGlyphs = null;
-                this.canEndup = canEndup;
+                this.endUpStyle = endUpStyle;
             }
 
             public GlyphInfo(uint index, uint globalIndex, string constructGlyphs)
@@ -55,7 +57,7 @@ namespace UInput
                 this.index = index;
                 this.globalIndex = globalIndex;
                 this.constructGlyphs = constructGlyphs;
-                canEndup = true;
+                endUpStyle = EndUpStyle.none;
             }
         }
 
@@ -104,7 +106,7 @@ namespace UInput
                 { 'ㄵ', new GlyphInfo(4,  0                    )},
                 { 'ㄶ', new GlyphInfo(5,  0                    )},
             { 'ㄷ',     new GlyphInfo(6,  3  , "ㄷ"            )},
-                { 'ㄸ', new GlyphInfo(7,  4  , false           )},
+                { 'ㄸ', new GlyphInfo(7,  4  , EndUpStyle.endUp)},
             { 'ㄹ',     new GlyphInfo(8,  5  , "ㄱㅁㅂㅅㅌㅍㅎ")},
                 { 'ㄺ', new GlyphInfo(9,  0                    )},
                 { 'ㄻ', new GlyphInfo(10, 0                    )},
@@ -115,18 +117,18 @@ namespace UInput
                 { 'ㅀ', new GlyphInfo(15, 0                    )},
             { 'ㅁ',     new GlyphInfo(16, 6                    )},
             { 'ㅂ',     new GlyphInfo(17, 7  , "ㅂㅅ"          )},
-                { 'ㅃ', new GlyphInfo(18, 8  , false           )},
+                { 'ㅃ', new GlyphInfo(18, 8  , EndUpStyle.endUp)},
                 { 'ㅄ', new GlyphInfo(19, 0                    )},
             { 'ㅅ',     new GlyphInfo(20, 9  , "ㅅ"            )},
                 { 'ㅆ', new GlyphInfo(21, 10                   )},
-            { 'ㅇ',     new GlyphInfo(22, 11                   )},
+            { 'ㅇ',     new GlyphInfo(22, 11 , EndUpStyle.alone)},
             { 'ㅈ',     new GlyphInfo(23, 12 , "ㅈ"            )},
-                { 'ㅉ', new GlyphInfo(24, 13 , false           )},
-            { 'ㅊ',     new GlyphInfo(25, 14                   )},
-            { 'ㅋ',     new GlyphInfo(26, 15                   )},
-            { 'ㅌ',     new GlyphInfo(27, 16                   )},
-            { 'ㅍ',     new GlyphInfo(28, 17                   )},
-            { 'ㅎ',     new GlyphInfo(29, 18                   )}
+                { 'ㅉ', new GlyphInfo(24, 13 , EndUpStyle.endUp)},
+            { 'ㅊ',     new GlyphInfo(25, 14 , EndUpStyle.alone)},
+            { 'ㅋ',     new GlyphInfo(26, 15 , EndUpStyle.alone)},
+            { 'ㅌ',     new GlyphInfo(27, 16 , EndUpStyle.alone)},
+            { 'ㅍ',     new GlyphInfo(28, 17 , EndUpStyle.alone)},
+            { 'ㅎ',     new GlyphInfo(29, 18 , EndUpStyle.alone)}
         };
 
         /// <summary>
@@ -165,11 +167,14 @@ namespace UInput
                 if (Consonant.ContainsKey(characterHistory[characterHistory.Count - 1])) {
                     uint glyph = characterHistory[characterHistory.Count - 1];
                     GlyphInfo data = Consonant[Convert.ToChar(glyph)];
-                    if (data.constructGlyphs == null) {
+                    if (data.constructGlyphs == null &&
+                        data.endUpStyle != EndUpStyle.alone) {
                         while (data.constructGlyphs == null)
                             data = Consonant[Convert.ToChar(--glyph)];
 
                         characterHistory[characterHistory.Count - 1] = Convert.ToChar(glyph);
+
+                        buildResult = BuildGlyph(characterHistory);
 
                         return true;
                     }
@@ -182,6 +187,8 @@ namespace UInput
                             data = Vowel[Convert.ToChar(--glyph)];
 
                         characterHistory[characterHistory.Count - 1] = Convert.ToChar(glyph);
+
+                        buildResult = BuildGlyph(characterHistory);
 
                         return true;
                     }
@@ -331,10 +338,8 @@ namespace UInput
                                                .constructGlyphs.IndexOf(glyph)
                                        + 1;
 
-                            if (Consonant[Convert.ToChar(cacheGlyph)].canEndup)
-                                characterHistory[2] = Convert.ToChar(cacheGlyph);
-                            else {
-
+                            if (Consonant[Convert.ToChar(cacheGlyph)].endUpStyle
+                                == EndUpStyle.endUp) {
                                 UndoAutomata();
                                 EscapeGlyph();
 
@@ -342,8 +347,9 @@ namespace UInput
                                 characterHistory.Add(Convert.ToChar(cacheGlyph));
                                 scopeHistory.Clear();
                                 scopeHistory.Add(currentScope = AutomataScope.first);
-                            }
-
+                            } else
+                                characterHistory[2] = Convert.ToChar(cacheGlyph);
+                            
                         } else {
 
                             EscapeGlyph(glyph);
